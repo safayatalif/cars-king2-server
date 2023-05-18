@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.9tzptnp.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -26,6 +26,55 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
+        const toyCarsCollection = client.db("toyCarsDB").collection("toyCars");
+        
+        app.post('/addToyCars', async (req, res) => {
+            const toyCars = req.body;
+            const result = await toyCarsCollection.insertOne(toyCars);
+            res.send(result)
+        })
+
+        app.get('/getToyCars', async (req, res) => {
+            const result = await toyCarsCollection.find().toArray();
+            res.send(result)
+        })
+
+        app.get('/getToyCarsById/:id' ,  async(req , res )=>{
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const result = await toyCarsCollection.findOne(filter)
+            res.send(result)
+        })
+
+        // app.patch('/updateToyCarsById/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const toyCars = req.body;
+        //     // console.log(id);
+        //     const filter = { _id: new ObjectId(id) }
+        //     const option = { upsert: true }
+        //     const updateToyCars = {
+        //         $set: {
+        //             name: toyCars.name,
+        //             Category: toyCars.Category,
+        //             image: toyCars.image,
+        //             Country: toyCars.Country
+        //         }
+        //     }
+        //     const result = await chocolateCollection.updateOne(filter, toyCars, option)
+        //     res.send(result)
+
+        // }) 
+
+
+        app.delete('/deleteToyCarsById/:id', async (req, res) => {
+            const id = req.params.id;
+            // console.log(id)
+            const query = { _id: new ObjectId(id) }
+
+            const result = await toyCarsCollection.deleteOne(query)
+            res.send(result)
+        })
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
