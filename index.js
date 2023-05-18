@@ -45,6 +45,12 @@ async function run() {
             const result = await toyCarsCollection.findOne(filter)
             res.send(result)
         })
+        app.get('/getToyCarsByCategory/:text', async (req, res) => {
+            const text = req.params.text;
+            const filter = { "subCategory": text}
+            const result = await toyCarsCollection.findOne(filter)
+            res.send(result)
+        })
 
         app.patch('/updateToyCarsById/:id', async (req, res) => {
             const id = req.params.id;
