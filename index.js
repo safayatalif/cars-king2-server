@@ -27,7 +27,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const toyCarsCollection = client.db("toyCarsDB").collection("toyCars");
-        
+
         app.post('/addToyCars', async (req, res) => {
             const toyCars = req.body;
             const result = await toyCarsCollection.insertOne(toyCars);
@@ -39,31 +39,30 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/getToyCarsById/:id' ,  async(req , res )=>{
+        app.get('/getToyCarsById/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const result = await toyCarsCollection.findOne(filter)
             res.send(result)
         })
 
-        // app.patch('/updateToyCarsById/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const toyCars = req.body;
-        //     // console.log(id);
-        //     const filter = { _id: new ObjectId(id) }
-        //     const option = { upsert: true }
-        //     const updateToyCars = {
-        //         $set: {
-        //             name: toyCars.name,
-        //             Category: toyCars.Category,
-        //             image: toyCars.image,
-        //             Country: toyCars.Country
-        //         }
-        //     }
-        //     const result = await chocolateCollection.updateOne(filter, toyCars, option)
-        //     res.send(result)
+        app.patch('/updateToyCarsById/:id', async (req, res) => {
+            const id = req.params.id;
+            const toyCars = req.body;
+            // console.log(id);
+            const filter = { _id: new ObjectId(id) }
+            const option = { upsert: true }
+            const updateToyCars = {
+                $set: {
+                    toyName: toyCars.toyName,
+                    availableQuantity: toyCars.availableQuantity,
+                    detailDescription: toyCars.detailDescription
+                }
+            }
+            const result = await toyCarsCollection.updateOne(filter, updateToyCars, option)
+            res.send(result)
 
-        // }) 
+        })
 
 
         app.delete('/deleteToyCarsById/:id', async (req, res) => {
