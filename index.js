@@ -55,6 +55,7 @@ async function run() {
             res.send(result);
         });
 
+
         app.patch('/updateToyCarsById/:id', async (req, res) => {
             const id = req.params.id;
             const toyCars = req.body;
@@ -63,7 +64,7 @@ async function run() {
             const option = { upsert: true }
             const updateToyCars = {
                 $set: {
-                    toyName: toyCars.toyName,
+                    price: toyCars.price,
                     availableQuantity: toyCars.availableQuantity,
                     detailDescription: toyCars.detailDescription
                 }
