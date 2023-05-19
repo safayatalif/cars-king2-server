@@ -51,6 +51,11 @@ async function run() {
             const result = await toyCarsCollection.findOne(filter)
             res.send(result)
         })
+        app.get("/getToyCarsByCategory/:category", async (req, res) => {
+            console.log(req.params.id);
+            const result = await toyCarsCollection.find({status: req.params.category,}).toArray();
+            res.send(result);
+          });
 
         app.patch('/updateToyCarsById/:id', async (req, res) => {
             const id = req.params.id;
