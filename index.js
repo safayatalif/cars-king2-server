@@ -45,17 +45,15 @@ async function run() {
             const result = await toyCarsCollection.findOne(filter)
             res.send(result)
         })
-        app.get('/getToyCarsByCategory/:text', async (req, res) => {
-            const text = req.params.text;
-            const filter = { "subCategory": text}
-            const result = await toyCarsCollection.findOne(filter)
-            res.send(result)
-        })
         app.get("/getToyCarsByCategory/:category", async (req, res) => {
-            console.log(req.params.id);
-            const result = await toyCarsCollection.find({status: req.params.category,}).toArray();
+            const result = await toyCarsCollection.find({ subCategory: req.params.category}).toArray();
             res.send(result);
-          });
+        });
+
+        app.get("/getToyCarsByEmail/:email", async (req, res) => {
+            const result = await toyCarsCollection.find({ sellerEmail: req.params.email}).toArray();
+            res.send(result);
+        });
 
         app.patch('/updateToyCarsById/:id', async (req, res) => {
             const id = req.params.id;
