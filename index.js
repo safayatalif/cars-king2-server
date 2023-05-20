@@ -25,15 +25,14 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         const toyCarsCollection = client.db("toyCarsDB").collection("toyCars");
 
 
         app.get('/getToyCars', async (req, res) => {
-            const result = await toyCarsCollection.find().toArray();
+            const result = await toyCarsCollection.find().limit(20).toArray();
             res.send(result)
         })
-
         app.get('/getToyCarsById/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
@@ -46,7 +45,8 @@ async function run() {
         });
 
         app.get("/getToyCarsByEmail/:email", async (req, res) => {
-            const result = await toyCarsCollection.find({ sellerEmail: req.params.email }).toArray();
+            const query = parseInt(req.query.sort)
+            const result = await toyCarsCollection.find({ sellerEmail: req.params.email }).sort({ price: query }).toArray();
             res.send(result);
         });
 
