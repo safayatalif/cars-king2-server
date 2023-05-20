@@ -28,11 +28,6 @@ async function run() {
         await client.connect();
         const toyCarsCollection = client.db("toyCarsDB").collection("toyCars");
 
-        app.post('/addToyCars', async (req, res) => {
-            const toyCars = req.body;
-            const result = await toyCarsCollection.insertOne(toyCars);
-            res.send(result)
-        })
 
         app.get('/getToyCars', async (req, res) => {
             const result = await toyCarsCollection.find().toArray();
@@ -46,14 +41,32 @@ async function run() {
             res.send(result)
         })
         app.get("/getToyCarsByCategory/:category", async (req, res) => {
-            const result = await toyCarsCollection.find({ subCategory: req.params.category}).toArray();
+            const result = await toyCarsCollection.find({ subCategory: req.params.category }).toArray();
             res.send(result);
         });
 
         app.get("/getToyCarsByEmail/:email", async (req, res) => {
-            const result = await toyCarsCollection.find({ sellerEmail: req.params.email}).toArray();
+            const result = await toyCarsCollection.find({ sellerEmail: req.params.email }).toArray();
             res.send(result);
         });
+
+        app.get("/getToysByText/:text", async (req, res) => {
+            const text = req.params.text;
+            const result = await toyCarsCollection
+                .find({
+                    $or: [
+                        { toyName: { $regex: text, $options: "i" } },
+                    ],
+                })
+                .toArray();
+            res.send(result);
+        });
+
+        app.post('/addToyCars', async (req, res) => {
+            const toyCars = req.body;
+            const result = await toyCarsCollection.insertOne(toyCars);
+            res.send(result)
+        })
 
 
         app.patch('/updateToyCarsById/:id', async (req, res) => {
